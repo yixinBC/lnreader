@@ -74,6 +74,7 @@ button {
 button:hover {
   border-color: #396cd8;
 }
+
 button:active {
   border-color: #396cd8;
   background-color: #e8e8e8;
@@ -88,7 +89,7 @@ button {
   margin-right: 5px;
 }
 
-@media (prefers-color-scheme: dark) {
+/* @media (prefers-color-scheme: dark) {
   :root {
     color: #f6f6f6;
     background-color: #2f2f2f;
@@ -106,4 +107,4 @@ button {
   button:active {
     background-color: #0f0f0f69;
   }
-}
+} */
