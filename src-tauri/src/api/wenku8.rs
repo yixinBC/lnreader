@@ -1,10 +1,11 @@
 use crate::utils::fake_ua;
 
-async fn login(cookie_jar: reqwest::cookie::Jar, username: &str, password: &str, usecookie: i32) {
-    let client = reqwest::Client::builder()
-        .user_agent(fake_ua())
-        .build()
-        .unwrap();
+async fn login(
+    client: &reqwest::Client,
+    username: &str,
+    password: &str,
+    usecookie: i32,
+) -> reqwest::Result<reqwest::Response> {
     let res = client
         .post("https://www.wenku8.net/login.php")
         .form(&[
@@ -15,15 +16,23 @@ async fn login(cookie_jar: reqwest::cookie::Jar, username: &str, password: &str,
         ])
         .send()
         .await;
-    cookie_jar.add_cookie_str(
-        res.unwrap()
-            .headers()
-            .get("Set-Cookie")
-            .unwrap()
-            .to_str()
-            .unwrap(),
-        &"https://www.wenku8.net/login.php"
-            .parse::<reqwest::Url>()
-            .unwrap(),
-    )
+    res
+}
+
+pub struct Wenku8 {
+    _client: reqwest::Client,
+}
+
+impl Wenku8 {
+    pub async fn new(name: String, password: String) -> Self {
+        let client = reqwest::Client::builder()
+            .user_agent(fake_ua())
+            .cookie_store(true)
+            .build()
+            .unwrap();
+        let _ = login(&client, &name, &password, 315360000)
+            .await
+            .expect("login failed");
+        Self { _client: client }
+    }
 }

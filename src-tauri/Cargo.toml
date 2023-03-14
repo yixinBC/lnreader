@@ -18,6 +18,7 @@ serde = { version = "1.0", features = ["derive"] }
 scraper = "0.15.0"
 reqwest = { version = "0.11", features = ["cookies"] }
 serde_json = "1.0"
+tokio = { version = "1.23.0", features = ["macros"] }
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem
