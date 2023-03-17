@@ -31,7 +31,6 @@ pub struct Book<'a> {
     client: &'a reqwest::Client,
     cover_url: String,
     author: Author<'a>,
-    meta_info: scraper::Html,
 }
 
 pub struct Wenku8 {
@@ -58,14 +57,26 @@ impl<'a> Book<'a> {
                 .unwrap()
                 .as_str(),
         );
+        let name = meta_info.select(
+            &scraper::Selector::parse(
+                "#content > div:nth-child(1) > table:nth-child(1) > tr:nth-child(1) > td:nth-child(1) \\
+                > table:nth-child(1) > tr:nth-child(1) > td:nth-child(1) > span:nth-child(1) > b:nth-child(1)").unwrap())
+                .next().unwrap().text().collect::<Vec<_>>().join("");
+        let cover_url = meta_info.select(
+            &scraper::Selector::parse(
+                "#content > div:nth-child(1) > table:nth-child(4) > tr:nth-child(1) > td:nth-child(1) > img:nth-child(1)").unwrap())
+                .next().unwrap().value().attr("src").unwrap().to_string();
+        let author_name = meta_info.select(
+            &scraper::Selector::parse(
+                "#content > div:nth-child(1) > table:nth-child(1) > tr:nth-child(2) > td:nth-child(2)").unwrap())
+                .next().unwrap().text().collect::<Vec<_>>().join("")[5..].to_string();
         Self {
             id,
             url,
-            meta_info,
-            name: String::new(),
-            client: client,
-            cover_url: String::new(),
-            author: Author::new(client, String::new()),
+            name,
+            client,
+            cover_url,
+            author: Author::new(client, author_name),
         }
     }
 }
